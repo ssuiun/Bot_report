@@ -95,6 +95,16 @@ async def get_user(telegram_id: int) -> dict | None:
         return dict(row) if row else None
 
 
+async def restore_super_admin(telegram_id: int) -> None:
+    """Восстанавливает роль 'admin' и активность для супер-администратора."""
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            "UPDATE users SET role = 'admin', active = 1 WHERE telegram_id = ?",
+            (telegram_id,),
+        )
+        await db.commit()
+
+
 async def get_user_by_id(user_id: int) -> dict | None:
     async with aiosqlite.connect(DB_PATH) as db:
         db.row_factory = aiosqlite.Row

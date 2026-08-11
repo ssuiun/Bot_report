@@ -3,6 +3,7 @@ from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
+from config import SUPER_ADMIN_IDS
 from db import database as db
 from keyboards.reply import main_menu, BTN_BACK, BTN_CANCEL
 
@@ -12,11 +13,25 @@ router = Router()
 @router.message(CommandStart())
 async def cmd_start(message: Message, state: FSMContext) -> None:
     await state.clear()
-    user = await db.get_user(message.from_user.id)
+    user_tg_id = message.from_user.id
+    user = await db.get_user(user_tg_id)
+
+    # Если пользователь из SUPER_ADMIN_IDS — автоматически создаём/восстанавливаем его
+    if user_tg_id in SUPER_ADMIN_IDS:
+        if user is None:
+            # Первый вход супер-админа — создаём запись
+            full_name = message.from_user.full_name or "Администратор"
+            await db.add_user(user_tg_id, full_name, "Руководство", "", role="admin")
+            user = await db.get_user(user_tg_id)
+        elif user["role"] != "admin" or not user["active"]:
+            # Роль слетела (например, после сброса БД на Railway) — восстанавливаем
+            await db.restore_super_admin(user_tg_id)
+            user = await db.get_user(user_tg_id)
+
     if user is None or not user["active"]:
         await message.answer(
             "👋 Вы пока не зарегистрированы в системе.\n\n"
-            f"Ваш Telegram ID: <code>{message.from_user.id}</code>\n\n"
+            f"Ваш Telegram ID: <code>{user_tg_id}</code>\n\n"
             "Передайте этот ID администратору, чтобы он добавил вас через команду "
             "/add_user — после этого бот станет доступен.",
         )
