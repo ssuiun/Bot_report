@@ -60,16 +60,27 @@ async def init_db() -> None:
         await db.executescript(_SCHEMA)
         await db.commit()
 
-        # Гарантируем, что у бота есть хотя бы один администратор,
-        # даже если таблица users пустая при первом запуске.
+        # Гарантируем, что SUPER_ADMIN_IDS всегда имеют роль 'admin' и активны,
+        # даже после перезапуска контейнера (Railway сбрасывает эфемерную ФС).
+        # Если пользователь уже зарегистрирован — только обновляем роль,
+        # сохраняя его имя и данные профиля.
         for admin_id in SUPER_ADMIN_IDS:
-            cur = await db.execute("SELECT id FROM users WHERE telegram_id = ?", (admin_id,))
+            cur = await db.execute("SELECT id, full_name FROM users WHERE telegram_id = ?", (admin_id,))
             row = await cur.fetchone()
             if row is None:
+                # Пользователь ещё не регистрировался — создаём запись-заглушку.
+                # Бот предложит ему заполнить профиль при первом /start.
                 await db.execute(
                     "INSERT INTO users (telegram_id, full_name, position, phone, role, active, created_at) "
                     "VALUES (?, ?, ?, ?, 'admin', 1, ?)",
                     (admin_id, "Администратор", "Руководство", "", datetime.now().isoformat()),
+                )
+            else:
+                # Пользователь уже есть — восстанавливаем роль admin и активность,
+                # не трогая имя, должность и телефон.
+                await db.execute(
+                    "UPDATE users SET role = 'admin', active = 1 WHERE telegram_id = ?",
+                    (admin_id,),
                 )
         await db.commit()
 
