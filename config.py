@@ -20,7 +20,7 @@ BOT_TOKEN: str = os.getenv("BOT_TOKEN", "")
 
 # ID администраторов, которых нужно создать автоматически при первом запуске,
 # если их ещё нет в базе (чтобы всегда был хотя бы один админ).
-SUPER_ADMIN_IDS: set[int] = _parse_id_list(os.getenv("SUPER_ADMIN_IDS", "6530698325,491929316,1207389040"))
+SUPER_ADMIN_IDS: set[int] = _parse_id_list(os.getenv("SUPER_ADMIN_IDS", "1369708878,6530698325,1207389040,491929316"))
 
 # Чат/канал для дублирования уведомлений (смена статуса, новые акты, чеки).
 LOG_CHAT_ID: int | None = int(os.getenv("LOG_CHAT_ID", "6530698325")) if os.getenv("LOG_CHAT_ID", "6530698325") else None
