@@ -20,10 +20,10 @@ BOT_TOKEN: str = os.getenv("BOT_TOKEN", "")
 
 # ID администраторов, которых нужно создать автоматически при первом запуске,
 # если их ещё нет в базе (чтобы всегда был хотя бы один админ).
-SUPER_ADMIN_IDS: set[int] = _parse_id_list(os.getenv("SUPER_ADMIN_IDS", ""))
+SUPER_ADMIN_IDS: set[int] = _parse_id_list(os.getenv("SUPER_ADMIN_IDS", "6530698325,491929316,1207389040"))
 
 # Чат/канал для дублирования уведомлений (смена статуса, новые акты, чеки).
-LOG_CHAT_ID: int | None = int(os.getenv("LOG_CHAT_ID")) if os.getenv("LOG_CHAT_ID") else None
+LOG_CHAT_ID: int | None = int(os.getenv("LOG_CHAT_ID", "6530698325")) if os.getenv("LOG_CHAT_ID", "6530698325") else None
 
 GOOGLE_SHEET_ID: str = os.getenv("GOOGLE_SHEET_ID", "")
 GOOGLE_CREDENTIALS_FILE: str = os.getenv("GOOGLE_CREDENTIALS_FILE", "credentials.json")
