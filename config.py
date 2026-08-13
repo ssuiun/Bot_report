@@ -27,6 +27,7 @@ LOG_CHAT_ID: int | None = int(os.getenv("LOG_CHAT_ID", "6530698325")) if os.gete
 
 GOOGLE_SHEET_ID: str = os.getenv("GOOGLE_SHEET_ID", "")
 GOOGLE_CREDENTIALS_FILE: str = os.getenv("GOOGLE_CREDENTIALS_FILE", "credentials.json")
+GOOGLE_CREDENTIALS_JSON: str = os.getenv("GOOGLE_CREDENTIALS_JSON", "")
 
 # ID папки в Google Drive, куда будут заливаться фото чеков (необязательно —
 # если не задано, файлы будут загружаться в корень диска сервисного аккаунта).

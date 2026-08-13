@@ -10,7 +10,8 @@ import re
 import gspread
 from google.oauth2.service_account import Credentials
 
-from config import GOOGLE_SHEET_ID, GOOGLE_CREDENTIALS_FILE, SHEET_STATUS, SHEET_ACTS, SHEET_FINANCE
+from config import GOOGLE_SHEET_ID, GOOGLE_CREDENTIALS_FILE, GOOGLE_CREDENTIALS_JSON, SHEET_STATUS, SHEET_ACTS, SHEET_FINANCE
+import json
 
 _SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -43,7 +44,11 @@ _spreadsheet = None
 def _get_spreadsheet():
     global _client, _spreadsheet
     if _spreadsheet is None:
-        creds = Credentials.from_service_account_file(GOOGLE_CREDENTIALS_FILE, scopes=_SCOPES)
+        if GOOGLE_CREDENTIALS_JSON:
+            creds_info = json.loads(GOOGLE_CREDENTIALS_JSON)
+            creds = Credentials.from_service_account_info(creds_info, scopes=_SCOPES)
+        else:
+            creds = Credentials.from_service_account_file(GOOGLE_CREDENTIALS_FILE, scopes=_SCOPES)
         _client = gspread.authorize(creds)
         _spreadsheet = _client.open_by_key(GOOGLE_SHEET_ID)
     return _spreadsheet
