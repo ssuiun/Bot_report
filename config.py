@@ -37,9 +37,9 @@ GOOGLE_DRIVE_FOLDER_ID: str = os.getenv("GOOGLE_DRIVE_FOLDER_ID", "")
 DB_PATH: str = os.getenv("DB_PATH", "hr_bot.db")
 
 # Названия листов в таблице Google Sheets
-SHEET_STATUS = "Лист1"
-SHEET_ACTS = "Лист2"
-SHEET_FINANCE = "Лист3"
+SHEET_STATUS = "Статус"
+SHEET_ACTS = "Акт"
+SHEET_FINANCE = "Финансы"
 
 FINANCE_CATEGORIES = ["Такси", "Курьер", "Канцелярия", "Хознужды", "Прочее"]
 
