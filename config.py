@@ -43,6 +43,8 @@ SHEET_FINANCE = "Лист3"
 
 FINANCE_CATEGORIES = ["Такси", "Курьер", "Канцелярия", "Хознужды", "Прочее"]
 
+TIMEZONE = os.getenv("TZ", "Asia/Bishkek")
+
 if not BOT_TOKEN:
     raise RuntimeError(
         "BOT_TOKEN не задан. Скопируйте .env.example в .env и заполните значения."

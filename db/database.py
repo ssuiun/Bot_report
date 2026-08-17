@@ -8,6 +8,7 @@
 """
 import aiosqlite
 from datetime import datetime
+from utils.formatting import get_now
 
 from config import DB_PATH, SUPER_ADMIN_IDS
 
@@ -73,7 +74,7 @@ async def init_db() -> None:
                 await db.execute(
                     "INSERT INTO users (telegram_id, full_name, position, phone, role, active, created_at) "
                     "VALUES (?, ?, ?, ?, 'admin', 1, ?)",
-                    (admin_id, "Администратор", "Руководство", "", datetime.now().isoformat()),
+                    (admin_id, "Администратор", "Руководство", "", get_now().isoformat()),
                 )
             else:
                 # Пользователь уже есть — восстанавливаем роль admin и активность,
@@ -136,7 +137,7 @@ async def add_user(telegram_id: int, full_name: str, position: str, phone: str, 
             "VALUES (?, ?, ?, ?, ?, 1, ?) "
             "ON CONFLICT(telegram_id) DO UPDATE SET "
             "full_name=excluded.full_name, position=excluded.position, phone=excluded.phone, active=1",
-            (telegram_id, full_name, position, phone, role, datetime.now().isoformat()),
+            (telegram_id, full_name, position, phone, role, get_now().isoformat()),
         )
         await db.commit()
 
@@ -224,7 +225,7 @@ async def add_act(sheet_row: int, from_user_id: int, to_user: str, item: str,
         cur = await db.execute(
             "INSERT INTO acts (sheet_row, from_user_id, to_user, item, due_date, comment, status, created_at) "
             "VALUES (?, ?, ?, ?, ?, ?, 'not_returned', ?)",
-            (sheet_row, from_user_id, to_user, item, due_date, comment, datetime.now().isoformat()),
+            (sheet_row, from_user_id, to_user, item, due_date, comment, get_now().isoformat()),
         )
         await db.commit()
         return cur.lastrowid

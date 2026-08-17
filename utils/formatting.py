@@ -1,12 +1,25 @@
 from datetime import datetime
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo
+
+from config import TIMEZONE
+
+def get_now() -> datetime:
+    try:
+        tz = ZoneInfo(TIMEZONE)
+    except Exception:
+        tz = None
+    return datetime.now(tz)
 
 
 def now_date() -> str:
-    return datetime.now().strftime("%d.%m.%Y")
+    return get_now().strftime("%d.%m.%Y")
 
 
 def now_time() -> str:
-    return datetime.now().strftime("%H:%M")
+    return get_now().strftime("%H:%M")
 
 
 def away_card(employee: str, destination: str, reason: str, return_time: str) -> str:
